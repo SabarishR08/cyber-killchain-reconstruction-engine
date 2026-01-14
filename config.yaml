@@ -1,0 +1,91 @@
+# Configuration for Cyber Kill Chain Reconstruction Engine
+# Adjust these thresholds to tune incident detection
+
+# Correlation Engine Configuration
+correlation:
+  # Time window (minutes) for event grouping
+  time_window_minutes: 10
+  
+  # Brute force detection threshold
+  brute_force_threshold: 3
+  
+  # Credential compromise threshold
+  credential_compromise_threshold: 2
+
+# Severity Mapping
+severity:
+  # Login failure severity
+  login_failed: 6
+  
+  # Login success severity
+  login_success: 3
+  
+  # Unusual activity severity
+  suspicious: 7
+
+# Risk Scoring Configuration
+risk_scoring:
+  # Severity component (0-40 points)
+  severity_weights:
+    LOW: 5
+    MEDIUM: 15
+    HIGH: 30
+    CRITICAL: 40
+  
+  # Confidence component (0-40 points)
+  confidence_threshold: 0.7
+  
+  # MITRE ATT&CK bonus (0-20 points)
+  mitre_bonus: 20
+
+# Priority Labels
+priority_thresholds:
+  CRITICAL: 90
+  HIGH: 70
+  MEDIUM: 40
+  LOW: 0
+
+# Threat Attribution Heuristics
+attribution:
+  # Multi-source threshold (IPs) for automated attack classification
+  multi_source_threshold: 4
+  
+  # Time clustering tolerance (seconds) for related events
+  time_clustering_tolerance: 300
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  file: "logs/killchain.log"
+  max_bytes: 10485760  # 10 MB
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Database Configuration
+database:
+  path: "events.db"
+  timeout: 5
+  check_same_thread: false
+
+# Alert Configuration
+alerts:
+  enabled: true
+  
+  # Risk score threshold for alerts
+  threshold: 70
+  
+  # Alert channels (can be extended to email, slack, etc.)
+  channels:
+    - "stdout"
+    - "file"
+
+# Advanced Settings
+advanced:
+  # Enable deterministic ordering of results
+  deterministic_mode: true
+  
+  # Enable audit logging for all operations
+  audit_logging: true
+  
+  # Enable graceful error handling
+  error_recovery: true
