@@ -10,7 +10,7 @@ Security operations centers process millions of log events daily across disparat
 - **Correlation**: Detecting multi-event patterns (e.g., failed login attempts preceding unauthorized access)
 - **Enrichment**: Mapping incidents to standardized frameworks (MITRE ATT&CK, Lockheed Martin kill chain)
 - **Attribution**: Inferring attacker behavior based on observable patterns
-- **Prioritization**: Ranking incidents by risk and operational impact
+- **Prioritization**: Ranking incidents by risk and business impact
 
 Manual correlation is time-consuming, error-prone, and inconsistent. This system automates the entire workflow while maintaining full explainability of detection logic.
 
@@ -101,7 +101,7 @@ Constructs directed graphs of entity relationships and attack progression.
 - **Nodes**: Unique entities (users, IP addresses, hosts)
 - **Edges**: Directed connections representing observed interactions (login attempts, lateral movement candidates)
 - **Analysis**: Graph traversal for identifying attack paths and blast radius estimation
-- **Visualization-ready**: networkx compatible for integration with visualization tools
+- **Visualization support**: networkx compatible for integration with visualization tools
 
 ### Timeline (`reporting/timeline.py`)
 
@@ -110,7 +110,7 @@ Reconstructs chronological event sequences with full context.
 - **Sorting**: Events ordered by timestamp (earliest first)
 - **Metadata preservation**: All event fields included for analyst review
 - **Incident context**: Links events to parent incident with pattern rationale
-- **Validation-ready**: Timeline data suitable for manual verification workflows
+- **Analyst-verifiable**: Timeline data suitable for manual verification workflows
 
 ### Attribution (`reporting/attribution.py`)
 
@@ -132,7 +132,7 @@ Prioritizes incidents for triage and response.
   - **Confidence**: 0-40 points (pattern certainty)
   - **MITRE weight**: 0-20 points (technique criticality)
 - **Priority labels**: CRITICAL (90-100), HIGH (70-89), MEDIUM (40-69), LOW (0-39)
-- **Operationalization**: Enables SOC teams to focus on highest-impact incidents first
+- **Incident prioritization**: Enables SOC teams to focus on highest-impact incidents first
 
 ## Design Principles
 
@@ -146,7 +146,7 @@ Prioritizes incidents for triage and response.
 
 **Modular architecture**: Clear separation of concerns (ingestion, correlation, enrichment, reporting). Components are independently testable and can be evolved without system-wide refactoring.
 
-**Minimal dependencies**: Uses Python stdlib (dataclasses, datetime, json, sqlite3) plus pandas and networkx only. No heavyweight frameworks. Reduces attack surface and operational complexity.
+**Minimal dependencies**: Uses Python stdlib (dataclasses, datetime, json, sqlite3) plus pandas and networkx only. No heavyweight frameworks. Reduces attack surface and deployment complexity.
 
 ## Installation
 
@@ -237,7 +237,7 @@ Incidents are emitted as JSON objects:
 
 ### Configuration File (`config.yaml`)
 
-Detection parameters and operational settings are stored in `config.yaml`:
+Detection parameters and system settings are stored in `config.yaml`:
 
 ```yaml
 correlation:
@@ -356,7 +356,7 @@ cyber-killchain-reconstruction-engine/
 └── README.md                      # This file
 ```
 
-## Operational Guarantees
+## System Guarantees
 
 **Deterministic**: Same input produces identical output across runs. No randomness or sampling.
 
@@ -364,9 +364,9 @@ cyber-killchain-reconstruction-engine/
 
 **Idempotent**: Re-ingesting duplicate events does not create duplicate incidents. Safe for replay and recovery scenarios.
 
-**Robust**: Invalid inputs are rejected with descriptive errors. Valid events process successfully with full error recovery.
+**Error handling**: Invalid inputs are rejected with descriptive errors. Valid events process successfully with full error recovery.
 
-**Extensible**: New log sources, detection rules, and enrichment logic integrate without modifying core pipeline.
+- **Extensible**: New log sources, detection rules, and enrichment logic integrate with minimal core changes.
 
 ## Known Limitations
 
