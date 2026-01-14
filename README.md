@@ -4,15 +4,15 @@ A deterministic, rule-driven system for reconstructing attack narratives from ra
 
 ## Problem Statement
 
-Security operations centers process millions of log events daily across disparate sources. Identifying coherent attack narratives from this volume requires:
+SOC teams process millions of log events daily from diverse sources. Identifying coherent attack narratives requires:
 
-- **Normalization**: Parsing diverse log formats into uniform event schemas
-- **Correlation**: Detecting multi-event patterns (e.g., failed login attempts preceding unauthorized access)
-- **Enrichment**: Mapping incidents to standardized frameworks (MITRE ATT&CK, Lockheed Martin kill chain)
-- **Attribution**: Inferring attacker behavior based on observable patterns
-- **Prioritization**: Ranking incidents by risk and business impact
+- **Normalization**: Convert diverse log formats into uniform schema.
+- **Correlation**: Detect multi-event patterns (e.g., repeated failed logins followed by successful access).
+- **Enrichment**: Map incidents to MITRE ATT&CK and Lockheed Martin kill chain stages.
+- **Attribution**: Infer attacker behavior from observable evidence.
+- **Prioritization**: Rank incidents by risk and business impact.
 
-Manual correlation is time-consuming, error-prone, and inconsistent. This system automates the entire workflow while maintaining full explainability of detection logic.
+Manual correlation is error-prone and slow. This system automates the workflow while ensuring full explainability of detection logic.
 
 ## System Architecture
 
@@ -79,11 +79,11 @@ Validates and parses raw log events into normalized schema.
 Detects multi-event patterns within configurable time windows.
 
 - **Time-window aggregation**: Groups events by entity and time bucket (default: 10 minutes)
-- **Pattern detection rules**:
-  - **Brute force**: 3+ failed login attempts on same account within window
-  - **Credential compromise**: Failed login(s) followed by successful login on same account within window
-- **Configuration-driven**: Thresholds and rules stored in `CORRELATION_CONFIG` dict; no hardcoded magic numbers
-- **Deterministic**: Same input always produces same output; no randomness or sampling
+- **Patterns detected**:
+  - **Brute force**: 3+ failed login attempts on same account
+  - **Credential compromise**: Failed login(s) followed by success
+- **Configuration-driven**: Thresholds in `CORRELATION_CONFIG`; no hardcoded values
+- **Deterministic**: Identical output for same input; no randomness or sampling
 
 ### Kill Chain & MITRE Mapping (`killchain/stages.py`, `mitre_mapping.py`)
 
@@ -136,17 +136,17 @@ Prioritizes incidents for triage and response.
 
 ## Design Principles
 
-**Deterministic**: Same input produces identical output across runs. No randomness, sampling, or probabilistic elements. Enables repeatability, debugging, and forensic auditability.
+**Deterministic**: Identical output for identical input. No randomness or sampling. Enables repeatability, debugging, and forensic auditability.
 
-**Explainable**: All detection logic is rule-based and human-readable. No ML black boxes or learned parameters. Analysts can understand why an incident was flagged.
+**Explainable**: Rule-based logic only. No ML black boxes. Analysts understand why incidents are detected.
 
-**Standards-based**: Uses MITRE ATT&CK and Lockheed Martin kill chain mappings. Output is immediately actionable in SOC workflows and threat intelligence systems.
+**Standards-based**: Uses MITRE ATT&CK and Lockheed Martin kill chain. Output integrates with SOC and threat intelligence workflows.
 
-**Configuration-driven**: Detection thresholds and rules stored in external YAML file and environment variables. Enables tuning for different environments without code changes.
+**Configuration-driven**: Detection thresholds in YAML and environment variables. Tune per environment without code changes.
 
-**Modular architecture**: Clear separation of concerns (ingestion, correlation, enrichment, reporting). Components are independently testable and can be evolved without system-wide refactoring.
+**Modular**: Clear separation (ingestion → correlation → enrichment → reporting). Components are independently testable and can evolve without refactoring.
 
-**Minimal dependencies**: Uses Python stdlib (dataclasses, datetime, json, sqlite3) plus pandas and networkx only. No heavyweight frameworks. Reduces attack surface and deployment complexity.
+**Minimal dependencies**: Python stdlib plus pandas and networkx only. Reduces attack surface and deployment complexity.
 
 ## Installation
 
@@ -289,36 +289,36 @@ KILLCHAIN_DB_PATH=/var/lib/killchain/events.db python main.py
 
 Environment variables take precedence over `config.yaml` values.
 
-## Testing
+## Testing and CI/CD
 
-### Unit Tests
-
-The system includes 41 unit tests covering ingestion, correlation, enrichment, and reporting:
+### Unit Tests (41 total, 100% passing)
 
 ```bash
 # Run all tests
 python -m pytest test_ingestion.py test_correlation.py test_killchain.py test_reporting.py -v
 
-# Run specific test module
+# Run specific module
 python -m pytest test_ingestion.py -v
 
-# Run with coverage report
+# With coverage report
 python -m pytest --cov=. --cov-report=html
-
-# Run single test class
-python -m pytest test_correlation.py::TestCorrelationRules -v
 ```
-
-### Test Coverage
 
 | Module | Tests | Coverage |
 |--------|-------|----------|
-| `ingestion/log_parser.py` | 8 | Timestamp parsing, field validation, error handling, metadata preservation |
-| `correlation/` | 9 | Brute force detection, credential compromise, time-window boundaries |
-| `killchain/` | 9 | Kill chain mapping, MITRE enrichment, incident construction |
-| `reporting/` | 15 | Risk scoring, priority labeling, timeline generation, threat attribution |
+| `ingestion/log_parser.py` | 8 | Timestamp parsing, field validation, error handling |
+| `correlation/` | 9 | Brute force detection, credential compromise patterns |
+| `killchain/` | 9 | Kill chain mapping, MITRE enrichment |
+| `reporting/` | 15 | Risk scoring, prioritization, attribution |
 
-All tests use deterministic inputs and expected outputs; no randomness or mock objects.
+### CI/CD Pipeline
+
+GitHub Actions (`ci.yml`):
+- **Test job**: Python 3.8–3.11 on Windows, Linux, macOS; Flake8 linting; coverage reporting
+- **Security job**: Bandit (static analysis), Safety (dependency scanning)
+- **Integration job**: End-to-end pipeline validation
+
+Triggered on push/PR to main or develop branches.
 
 ## Project Structure
 
@@ -358,31 +358,41 @@ cyber-killchain-reconstruction-engine/
 
 ## System Guarantees
 
-**Deterministic**: Same input produces identical output across runs. No randomness or sampling.
-
-**Traceable**: Every incident includes source events, detection rationale, and confidence scores. Correlation IDs link related log entries.
-
-**Idempotent**: Re-ingesting duplicate events does not create duplicate incidents. Safe for replay and recovery scenarios.
-
-**Error handling**: Invalid inputs are rejected with descriptive errors. Valid events process successfully with full error recovery.
-
-- **Extensible**: New log sources, detection rules, and enrichment logic integrate with minimal core changes.
+- **Deterministic**: Identical output for identical input. No randomness.
+- **Traceable**: Every incident includes source events, rationale, and confidence. Correlation IDs link related log entries.
+- **Idempotent**: Duplicate events do not create duplicate incidents. Safe for replay.
+- **Error handling**: Invalid inputs rejected with descriptive errors. Valid events process successfully.
+- **Extensible**: New sources, rules, and enrichment integrate with minimal core changes.
 
 ## Known Limitations
 
-- **Detection scope**: Currently detects brute force and credential compromise patterns. Does not detect lateral movement, data exfiltration, or resource consumption anomalies.
-- **Correlation window**: Fixed time-window approach; does not capture attacks spanning hours or days with sparse events.
-- **Behavioral attribution**: Confidence scores are rule-based heuristics, not behavioral ML. May not capture novel attack patterns.
-- **Scalability**: SQLite backend suitable for log volumes up to ~100K events/day. Larger deployments require database migration (PostgreSQL, etc.).
-- **Real-time processing**: Current implementation batch-processes logs. Real-time streaming would require architectural changes (message queues, etc.).
+- **Detection scope**: Detects brute force and credential compromise only. No lateral movement, exfiltration, or anomaly detection.
+- **Correlation window**: Fixed time-window approach; cannot detect slow attacks spanning hours/days with sparse events.
+- **Attribution**: Rule-based heuristics, not behavioral ML. May miss novel attack patterns.
+- **Scalability**: SQLite suitable for ~100K events/day. Larger deployments need PostgreSQL migration.
+- **Real-time**: Batch-only. Real-time streaming requires message queue integration.
 
-## Future Work
+## Future Enhancements
 
-- Real-time event streaming (Kafka, RabbitMQ integration)
-- REST API for incident query and export
-- Additional log sources (Windows Event Log, firewall, DNS, endpoint detection)
-- Custom detection rule DSL for SOC teams
-- Incident deduplication and rollup
-- Playbook automation (automated response triggers)
-- Performance metrics export (Prometheus)
-- Container deployment (Dockerfile, Kubernetes manifests)
+**High Priority**
+- Real-time streaming (Kafka, message queues)
+- REST API for incident query
+- Additional log sources (firewall, DNS, endpoint, Windows Event Log)
+- Incident deduplication
+
+**Medium Priority**
+- Custom detection rule DSL
+- Playbook automation
+- Prometheus metrics export
+- Kubernetes deployment manifests
+
+**Lower Priority**
+- Graph-based anomaly detection
+- Threat intelligence feed integration
+- Attack graph visualization UI
+- Multi-tenancy support
+- Compliance reporting (SOC 2, FedRAMP)
+
+## Summary
+
+The Cyber Kill Chain Reconstruction Engine automates incident correlation and enrichment with deterministic, explainable logic. Appropriate for SOC teams requiring rule-based detection without ML black boxes. Current implementation covers core attack patterns (brute force, credential compromise) with full testing, logging, and configuration support. Modular architecture enables extension to additional patterns and sources.
