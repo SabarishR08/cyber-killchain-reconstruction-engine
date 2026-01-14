@@ -60,11 +60,11 @@ Raw Logs → Ingestion → Normalized Schema → Correlation → Incidents
 
 ## Why Non-Trivial
 
-1. **Deterministic Design**: Time-window correlation produces repeatable, debuggable results—no ML black boxes
-2. **Standards Grounded**: MITRE ATT&CK and Lockheed Martin kill chain mappings make output actionable
-3. **Production Hardened**: Input validation, error recovery, idempotent DB operations, deterministic ordering
-4. **Modular Pipeline**: Clear separation (ingestion → correlation → enrichment → reporting) enables independent testing
-5. **Minimal Bloat**: Uses stdlib (dataclasses, datetime, json, sqlite3) + pandas, networkx only
+1. **Deterministic Design**: Time-window correlation produces repeatable, debuggable results—explainable logic, no probabilistic ML
+2. **Standards Grounded**: MITRE ATT&CK and Lockheed Martin kill chain mappings make output actionable to security teams
+3. **Production-Oriented**: Input validation, error recovery, idempotent DB operations, deterministic ordering, audit logging
+4. **Modular Pipeline**: Clear separation (ingestion → correlation → enrichment → reporting) enables independent testing and evolution
+5. **Minimal Dependencies**: Uses stdlib (dataclasses, datetime, json, sqlite3) + pandas, networkx only—no framework bloat
 
 ## Quick Start
 
@@ -159,11 +159,11 @@ python test_day4.py   # MITRE and attribution
 
 ## Operational Guarantees
 
-- **Deterministic**: Same input → same output
-- **Traceable**: Every incident includes source events and pattern rationale
-- **Idempotent**: Re-inserting same event doesn't duplicate incidents
-- **Robust**: Invalid fields skip gracefully; valid events process normally
-- **Extensible**: New parsers and rules integrate without core changes
+- **Deterministic**: Same input → same output (no randomness, fully reproducible)
+- **Traceable**: Every incident includes source events, detection rationale, and confidence scoring
+- **Idempotent**: Re-ingesting same event doesn't duplicate incidents; safe for replay
+- **Robust**: Invalid inputs handled gracefully; valid events process with full error recovery
+- **Extensible**: New log sources, patterns, and enrichments integrate without core changes
 
 ## Project Structure
 
