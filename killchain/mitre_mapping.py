@@ -16,6 +16,21 @@ MITRE_TECHNIQUES = {
         "tactic": "Initial Access",
         "description": "Adversary used compromised or guessed user account credentials to gain initial access.",
         "severity_modifier": 1.2
+    },
+    # ── Network-Traffic-Specific Mappings (SIH26153) ──
+    "Port Scan to Exploit Attempt": {
+        "technique_id": "T1046",
+        "technique_name": "Network Service Discovery",
+        "tactic": "Discovery",
+        "description": "Adversary scanned network services then attempted exploitation of discovered ports.",
+        "severity_modifier": 1.3
+    },
+    "DoS Traffic Spike": {
+        "technique_id": "T1499",
+        "technique_name": "Endpoint Denial of Service",
+        "tactic": "Impact",
+        "description": "High-volume traffic spike from single source indicating denial-of-service activity.",
+        "severity_modifier": 1.25
     }
 }
 

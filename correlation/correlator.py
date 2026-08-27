@@ -3,7 +3,12 @@ from collections import defaultdict
 from datetime import timedelta
 from typing import List, Dict, Any
 from ingestion.schemas import NormalizedEvent
-from correlation.rules import is_bruteforce, is_credential_compromise
+from correlation.rules import (
+    is_bruteforce,
+    is_credential_compromise,
+    is_portscan_to_exploit,
+    is_dos_traffic_spike,
+)
 
 
 TIME_WINDOW = timedelta(minutes=10)
@@ -61,7 +66,7 @@ def analyze_window(events: List[NormalizedEvent]) -> Dict[str, Any]:
             "pattern": "Brute Force Authentication Attempt",
             "kill_chain_stage": "Initial Access",
             "event_count": len(events),
-            "events": events
+            "events": events,
         }
 
     # Check for credential compromise
@@ -71,7 +76,26 @@ def analyze_window(events: List[NormalizedEvent]) -> Dict[str, Any]:
             "pattern": "Possible Credential Compromise",
             "kill_chain_stage": "Initial Access",
             "event_count": len(events),
-            "events": events
+            "events": events,
+        }
+
+    # Network-traffic rules (SIH26153)
+    if is_portscan_to_exploit(events):
+        return {
+            "entity": events[0].entity,
+            "pattern": "Port Scan to Exploit Attempt",
+            "kill_chain_stage": "Reconnaissance → Exploitation",
+            "event_count": len(events),
+            "events": events,
+        }
+
+    if is_dos_traffic_spike(events):
+        return {
+            "entity": events[0].entity,
+            "pattern": "DoS Traffic Spike",
+            "kill_chain_stage": "Actions on Objectives",
+            "event_count": len(events),
+            "events": events,
         }
 
     return None

@@ -19,4 +19,7 @@ KILL_CHAIN_MAPPING = {
     "Possible Credential Compromise": KillChainStage.EXPLOITATION,
     "Lateral Movement": KillChainStage.EXPLOITATION,
     "Data Exfiltration": KillChainStage.ACTIONS_ON_OBJECTIVES,
+    # ── Network-Traffic-Specific Mappings (SIH26153) ──
+    "Port Scan to Exploit Attempt": KillChainStage.EXPLOITATION,
+    "DoS Traffic Spike": KillChainStage.ACTIONS_ON_OBJECTIVES,
 }
