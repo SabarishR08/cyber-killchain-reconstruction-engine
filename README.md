@@ -1,4 +1,54 @@
-# Cyber Kill Chain Reconstruction Engine
+# Cyber Killchain Reconstruction Engine
+
+![License](https://img.shields.io/badge/license-MIT-green) ![Language](https://img.shields.io/badge/language-Python-informational)
+
+
+## 📌 Overview
+
+A Python-based system that ingests authentication, network, and endpoint logs to correlate security events, reconstruct attack timelines, and map observed behaviors to cyber kill chain stages and MITRE ATT&CK techniques.
+
+## 🏗️ Architecture
+
+```text
+Browser / UI
+     │   HTTP
+     ▼
+Python app
+```
+
+## 🧰 Tech Stack
+
+- **Language:** Python
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Python 3.10+
+
+### 1. Clone
+
+```bash
+git clone https://github.com/SabarishR08/cyber-killchain-reconstruction-engine.git
+cd cyber-killchain-reconstruction-engine
+```
+
+### 2. Install dependencies
+
+```bash
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### 4. Run
+
+```bash
+python main.py
+```
+
+
+---
 
 A deterministic, rule-driven system for reconstructing attack narratives from raw security logs. Designed for SOC/DFIR teams requiring explainable incident correlation without probabilistic ML.
 
@@ -396,3 +446,9 @@ cyber-killchain-reconstruction-engine/
 ## Summary
 
 The Cyber Kill Chain Reconstruction Engine automates incident correlation and enrichment with deterministic, explainable logic. Appropriate for SOC teams requiring rule-based detection without ML black boxes. Current implementation covers core attack patterns (brute force, credential compromise) with full testing, logging, and configuration support. Modular architecture enables extension to additional patterns and sources.
+
+---
+
+## 📄 License
+
+[MIT](LICENSE) — © 2026 Sabarish R.
