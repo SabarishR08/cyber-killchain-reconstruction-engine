@@ -3,11 +3,11 @@
 ![License](https://img.shields.io/badge/license-MIT-green) ![Language](https://img.shields.io/badge/language-Python-informational)
 
 
-## 📌 Overview
+## Overview
 
 A Python-based system that ingests authentication, network, and endpoint logs to correlate security events, reconstruct attack timelines, and map observed behaviors to cyber kill chain stages and MITRE ATT&CK techniques.
 
-## 🏗️ Architecture
+## Architecture
 
 ```text
 Browser / UI
@@ -16,11 +16,11 @@ Browser / UI
 Python app
 ```
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - **Language:** Python
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -130,8 +130,8 @@ Detects multi-event patterns within configurable time windows.
 
 - **Time-window aggregation**: Groups events by entity and time bucket (default: 10 minutes)
 - **Patterns detected**:
-  - **Brute force**: 3+ failed login attempts on same account
-  - **Credential compromise**: Failed login(s) followed by success
+ - **Brute force**: 3+ failed login attempts on same account
+ - **Credential compromise**: Failed login(s) followed by success
 - **Configuration-driven**: Thresholds in `CORRELATION_CONFIG`; no hardcoded values
 - **Deterministic**: Identical output for same input; no randomness or sampling
 
@@ -167,9 +167,9 @@ Reconstructs chronological event sequences with full context.
 Infers attacker behavior patterns based on observable evidence.
 
 - **Behavioral heuristics**:
-  - Multi-source attacks (4+ distinct IPs): Suggests automated tool or botnet
-  - Single-source credential hunting: Suggests targeted attack or insider threat
-  - Time clustering: Rapid succession indicates automation; sparse timing suggests manual work
+ - Multi-source attacks (4+ distinct IPs): Suggests automated tool or botnet
+ - Single-source credential hunting: Suggests targeted attack or insider threat
+ - Time clustering: Rapid succession indicates automation; sparse timing suggests manual work
 - **Confidence scoring**: Based on pattern repetition and supporting evidence
 - **Human-readable output**: Narrative explanations suitable for analyst handoff
 
@@ -178,9 +178,9 @@ Infers attacker behavior patterns based on observable evidence.
 Prioritizes incidents for triage and response.
 
 - **Scoring components**:
-  - **Severity**: 0-40 points (event classification)
-  - **Confidence**: 0-40 points (pattern certainty)
-  - **MITRE weight**: 0-20 points (technique criticality)
+ - **Severity**: 0-40 points (event classification)
+ - **Confidence**: 0-40 points (pattern certainty)
+ - **MITRE weight**: 0-20 points (technique criticality)
 - **Priority labels**: CRITICAL (90-100), HIGH (70-89), MEDIUM (40-69), LOW (0-39)
 - **Incident prioritization**: Enables SOC teams to focus on highest-impact incidents first
 
@@ -449,6 +449,6 @@ The Cyber Kill Chain Reconstruction Engine automates incident correlation and en
 
 ---
 
-## 📄 License
+## License
 
 [MIT](LICENSE) — © 2026 Sabarish R.
